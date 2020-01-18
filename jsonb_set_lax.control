@@ -1,0 +1,7 @@
+# jsonb_set_lax extension
+comment = 'jsonb_set_lax extension'
+default_version = '1.0.0'
+module_pathname = '$libdir/jsonb_set_lax'
+relocatable = false
+schema = pg_catalog
+

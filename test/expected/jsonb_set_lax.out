@@ -1,0 +1,29 @@
+\pset null NULL
+select jsonb_set_lax('{"a":1,"b":2}','{b}',null);
+    jsonb_set_lax    
+---------------------
+ {"a": 1, "b": null}
+(1 row)
+
+select jsonb_set_lax('{"a":1,"b":2}','{d}',null,true);
+        jsonb_set_lax        
+-----------------------------
+ {"a": 1, "b": 2, "d": null}
+(1 row)
+
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, true, null);
+ERROR:  need delete_key, return_target, use_json_null, or raise_exception
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'raise_exception');
+ERROR:  null jsonb value
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'return_target');
+  jsonb_set_lax   
+------------------
+ {"a": 1, "b": 2}
+(1 row)
+
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'delete_key');
+ jsonb_set_lax 
+---------------
+ {"a": 1}
+(1 row)
+
