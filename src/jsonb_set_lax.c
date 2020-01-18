@@ -5,6 +5,11 @@
 #include "utils/builtins.h"
 #include "utils/jsonb.h"
 
+/* version check */
+#if PG_VERSION_NUM < 950000 || PG_VERSION_NUM > 120000
+#error This extension is only for PostgreSQL releases 9.5, 9.6, 10, 11, and 12.
+#endif
+
 PG_MODULE_MAGIC;
 
 /* functions we refer to */
