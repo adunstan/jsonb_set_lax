@@ -1,4 +1,18 @@
 \pset null NULL
+-- pass though non nulls to jsonb_set
+select jsonb_set_lax('{"a":1,"b":2}','{b}','5') ;
+  jsonb_set_lax   
+------------------
+ {"a": 1, "b": 5}
+(1 row)
+
+select jsonb_set_lax('{"a":1,"b":2}','{d}','6', true) ;
+      jsonb_set_lax       
+--------------------------
+ {"a": 1, "b": 2, "d": 6}
+(1 row)
+
+-- using the default treatment
 select jsonb_set_lax('{"a":1,"b":2}','{b}',null);
     jsonb_set_lax    
 ---------------------
@@ -11,19 +25,31 @@ select jsonb_set_lax('{"a":1,"b":2}','{d}',null,true);
  {"a": 1, "b": 2, "d": null}
 (1 row)
 
+-- errors
 select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, true, null);
 ERROR:  need delete_key, return_target, use_json_null, or raise_exception
-select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'raise_exception');
-ERROR:  null jsonb value
-select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'return_target');
-  jsonb_set_lax   
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, true, 'no_such_treatment');
+ERROR:  need delete_key, return_target, use_json_null, or raise_exception
+-- explicit treatments
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment => 'raise_exception') as raise_exception;
+ERROR:  NULL is not allowed
+DETAIL:  exception raised due to "null_value_treatment => 'raise_exception'"
+HINT:  to avoid, either change the null_value_treatment argument or ensure that an SQL NULL is not used
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment => 'return_target') as return_target;
+  return_target   
 ------------------
  {"a": 1, "b": 2}
 (1 row)
 
-select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment := 'delete_key');
- jsonb_set_lax 
----------------
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment => 'delete_key') as delete_key;
+ delete_key 
+------------
  {"a": 1}
+(1 row)
+
+select jsonb_set_lax('{"a":1,"b":2}', '{b}', null, null_value_treatment => 'use_json_null') as use_json_null;
+    use_json_null    
+---------------------
+ {"a": 1, "b": null}
 (1 row)
 
