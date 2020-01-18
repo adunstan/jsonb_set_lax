@@ -59,9 +59,13 @@ jsonb_set_lax(PG_FUNCTION_ARGS)
 		Datum	  newval;
 
 		newval = DirectFunctionCall1(jsonb_in, CStringGetDatum("null"));
-
+#if PG_VERSION_SUM >= 120000
 		fcinfo->args[2].value = newval;
 		fcinfo->args[2].isnull = false;
+#else
+		fcinfo->arg[2] = newval;
+		fcinfo->argnull[2] = false;
+#endif
 		return jsonb_set(fcinfo);
 	}
 	else if (strcmp(handle_val, "delete_key") == 0)
