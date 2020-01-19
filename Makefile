@@ -18,10 +18,16 @@ MODULE_big      = $(EXTENSION)
 OBJS         = $(patsubst $(ext_srcdir)/src/%.c,src/%.o,$(wildcard $(ext_srcdir)/src/*.c))
 PG_CONFIG    = pg_config
 
+PG_VERSION  := $(shell $(PG_CONFIG) --version)
+
 all: sql/$(EXTENSION)--$(EXTVERSION).sql
 
 sql/$(EXTENSION)--$(EXTVERSION).sql: $(ext_srcdir)/sql/$(EXTENSION).sql
+ifneq ($(findstring 9.5,$(PG_VERSION)),)
+	sed 's/PARALLEL SAFE//' $< > $@
+else
 	cp $< $@
+endif
 
 DATA_built = sql/$(EXTENSION)--$(EXTVERSION).sql
 DATA = $(filter-out $(ext_srcdir)/sql/$(EXTENSION)--$(EXTVERSION).sql, $(wildcard $(ext_srcdir)/sql/*--*.sql))

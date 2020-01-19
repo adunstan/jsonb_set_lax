@@ -10,7 +10,7 @@
 #include "utils/jsonb.h"
 
 /* version check */
-#if PG_VERSION_NUM < 950000 || PG_VERSION_NUM > 120000
+#if PG_VERSION_NUM < 90500 || PG_VERSION_NUM >= 130000
 #error This extension is only for PostgreSQL releases 9.5, 9.6, 10, 11, and 12.
 #endif
 
@@ -68,7 +68,7 @@ jsonb_set_lax(PG_FUNCTION_ARGS)
 		Datum	  newval;
 
 		newval = DirectFunctionCall1(jsonb_in, CStringGetDatum("null"));
-#if PG_VERSION_SUM >= 120000
+#if PG_VERSION_NUM >= 120000
 		fcinfo->args[2].value = newval;
 		fcinfo->args[2].isnull = false;
 #else
@@ -83,7 +83,7 @@ jsonb_set_lax(PG_FUNCTION_ARGS)
 	}
 	else if (strcmp(handle_val, "return_target") == 0)
 	{
-#if PG_VERSION_NUM >= 100000
+#if PG_VERSION_NUM >= 110000
 		Jsonb	   *in = PG_GETARG_JSONB_P(0);
 		PG_RETURN_JSONB_P(in);
 #else
