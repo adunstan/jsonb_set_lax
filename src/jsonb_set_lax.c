@@ -1,4 +1,8 @@
 
+/*
+ * Copyright (c) 2019-2020 Andrew Dunstan.
+ * See accompanying COPYRIGHT file for details.
+ */
 
 #include "postgres.h"
 #include "fmgr.h"
@@ -79,7 +83,7 @@ jsonb_set_lax(PG_FUNCTION_ARGS)
 	}
 	else if (strcmp(handle_val, "return_target") == 0)
 	{
-#if PG_VERION_NUM >= 100000
+#if PG_VERSION_NUM >= 100000
 		Jsonb	   *in = PG_GETARG_JSONB_P(0);
 		PG_RETURN_JSONB_P(in);
 #else
